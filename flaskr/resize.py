@@ -32,6 +32,6 @@ def upload_file():
     elif allowed_file(file.filename):
       filename = secure_filename(file.filename)
       img = Image.open(file)
-      img.save(os.path.join(basedir, UPLOAD_FOLDER, filename))
+      img.save(os.path.join(base_dir, UPLOAD_FOLDER, filename))
   
   return render_template('upload.html')
