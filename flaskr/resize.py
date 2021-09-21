@@ -1,6 +1,6 @@
 import os
 
-from flask import Blueprint, flash, request, render_template, redirect, url_for
+from flask import Blueprint, flash, g, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
 
 from flaskr.auth import login_required
@@ -31,7 +31,20 @@ def upload_file():
     if error is not None:
       flash(error)
     else:
+      # Save the file locally 
       filename = secure_filename(file.filename)
       file.save(os.path.join(base_dir, UPLOAD_FOLDER, filename))
+      
+      # Associate the file with the logged in user
+      db = get_db()
+      db.execute(
+				'INSERT INTO images (title, author_id)'
+				' VALUES (?, ?)',
+				(filename, g.user['id'])
+			)
+      db.commit()
+      
+      # TODO: Remove this eventually 
+      flash('SUCCESS!!!!!!!!!')
   
   return render_template('upload.html')
