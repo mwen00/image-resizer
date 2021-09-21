@@ -2,7 +2,6 @@ import os
 
 from flask import Blueprint, flash, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
-from PIL import Image
 
 from flaskr.auth import login_required
 from flaskr.db import get_db
@@ -26,12 +25,13 @@ def upload_file():
     
     if not file:
       error = 'File is required.'
+    elif not allowed_file(file.filename):
+      error = 'Accepted file formats: ' + ', '.join(str(i) for i in ALLOWED_EXTENSIONS)
     
     if error is not None:
       flash(error)
-    elif allowed_file(file.filename):
+    else:
       filename = secure_filename(file.filename)
-      img = Image.open(file)
-      img.save(os.path.join(base_dir, UPLOAD_FOLDER, filename))
+      file.save(os.path.join(base_dir, UPLOAD_FOLDER, filename))
   
   return render_template('upload.html')
