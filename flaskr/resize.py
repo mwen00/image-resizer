@@ -12,6 +12,20 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 UPLOAD_FOLDER = 'images/uploads/'
 
+@bp.route('/gallery')
+@login_required
+def gallery():
+    db = get_db()
+    user_id = g.user['id']
+    images = db.execute(
+        'SELECT title, created, author_id'
+        ' FROM images i JOIN user u ON i.author_id = u.id'
+        ' WHERE u.id = ?',
+        (user_id,)
+    ).fetchall()
+    
+    return render_template('gallery.html', images=images, id=user_id)
+
 def allowed_file(filename):
   return '.' in filename and \
     filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -38,10 +52,10 @@ def upload_file():
       # Associate the file with the logged in user
       db = get_db()
       db.execute(
-				'INSERT INTO images (title, author_id)'
-				' VALUES (?, ?)',
-				(filename, g.user['id'])
-			)
+        'INSERT INTO images (title, author_id)'
+        ' VALUES (?, ?)',
+        (filename, g.user['id'])
+        )
       db.commit()
       
       # TODO: Remove this eventually 

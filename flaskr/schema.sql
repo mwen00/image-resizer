@@ -22,6 +22,5 @@ CREATE TABLE images (
   author_id INTEGER NOT NULL,
   created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   title TEXT NOT NULL,
-  size INTEGER,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
