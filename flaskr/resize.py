@@ -61,13 +61,15 @@ def resize(name):
     widths = [str(i) for i in RESIZE_WIDTHS]
 
     if request.method == 'POST':
+        try:
             sizes = request.form.to_dict(flat=False)['sizes']
             int_sizes = [int(i) for i in sizes]
-            # try: 
+            
             process(int_sizes, filename)
-            # except:
-            #     flash('something went wrong')
-        # return redirect(url_for('resize.download'))
+            
+            return redirect(url_for('resize.download'))
+        except:
+            flash('something went wrong')
     
     return render_template('resize.html', filename=filename, resize_widths=widths)
 
@@ -107,3 +109,9 @@ def upload_file():
       flash('SUCCESS!!!!!!!!!')
   
   return render_template('upload.html')
+
+@bp.route('/download')
+@login_required
+def download():
+    
+    return render_template('download.html')
