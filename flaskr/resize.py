@@ -16,15 +16,20 @@ UPLOAD_FOLDER = 'images/uploads/'
 @login_required
 def gallery():
     db = get_db()
-    user_id = g.user['id']
     images = db.execute(
         'SELECT title, created, author_id'
         ' FROM images i JOIN user u ON i.author_id = u.id'
         ' WHERE u.id = ?',
-        (user_id,)
+        (g.user['id'],)
     ).fetchall()
     
-    return render_template('gallery.html', images=images, id=user_id)
+    # Convert sqlite row object to dict
+    images_dict = [dict(row) for row in images]
+    
+    for i in images_dict:
+        i['src'] = os.path.join(base_dir, UPLOAD_FOLDER, i['title'])
+    
+    return render_template('gallery.html', images=images_dict)
 
 def allowed_file(filename):
   return '.' in filename and \

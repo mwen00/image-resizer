@@ -7,10 +7,10 @@
 {% block content %}
 	{% for image in images %}
 		<div>
-			<h2>{{ id }}</h2>
 			<h3>{{ image['title'] }}</h3>
 			<p>{{ image['author_id'] }}</p>
 			{{ image['created'] }}
-		</div>
+			<img src='{{ image['src'] }}'>
+			{{ image['src'] }}
 	{% endfor %}
 {% endblock %}
