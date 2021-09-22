@@ -113,5 +113,15 @@ def upload_file():
 @bp.route('/download')
 @login_required
 def download():
+    db = get_db()
+    images = db.execute(
+        'SELECT title'
+        ' FROM images i JOIN user u ON i.author_id = u.id'
+        ' WHERE u.id = ?',
+        (g.user['id'],)
+    ).fetchall()
     
-    return render_template('download.html')
+    
+    
+    
+    return render_template('download.html', images=processed_images)
