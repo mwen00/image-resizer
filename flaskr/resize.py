@@ -32,6 +32,14 @@ def gallery():
     
     return render_template('gallery.html', images=images_dict)
 
+@bp.route('/resize/<name>')
+@login_required
+def resize(name):
+    selected_img = request.args.get('selected_img', None)
+    resize_widths = [100, 300, 500, 750, 1000, 1500, 2500]
+    
+    return render_template('resize.html')
+
 def allowed_file(filename):
   return '.' in filename and \
     filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS

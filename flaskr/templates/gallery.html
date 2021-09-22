@@ -10,7 +10,9 @@
 			<h3>{{ image['title'] }}</h3>
 			<p>{{ image['author_id'] }}</p>
 			{{ image['created'] }}
-			<img src={{ image['src'] }}>
-
+			<!-- TODO: Remove width attribute and use CSS -->
+			<a href="{{ url_for('resize.resize', name=image['title']) }}">
+				<img src={{ image['src'] }} width="300">
+			</a>
 	{% endfor %}
 {% endblock %}
