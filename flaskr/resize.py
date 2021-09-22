@@ -1,7 +1,9 @@
 import os
+import glob
 
 from flask import Blueprint, flash, g, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
+from PIL import Image
 
 from flaskr.auth import login_required
 from flaskr.db import get_db
@@ -11,6 +13,7 @@ base_dir = os.path.abspath(os.path.dirname(__file__))
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 UPLOAD_FOLDER = 'static/uploads/'
+RESIZE_WIDTHS = [100, 300, 500, 750, 1000, 1500, 2500]
 
 @bp.route('/gallery')
 @login_required
@@ -32,13 +35,18 @@ def gallery():
     
     return render_template('gallery.html', images=images_dict)
 
-@bp.route('/resize/<name>')
+@bp.route('/resize/<string:name>', methods=('GET', 'POST'))
 @login_required
 def resize(name):
-    selected_img = request.args.get('selected_img', None)
-    resize_widths = [100, 300, 500, 750, 1000, 1500, 2500]
+    filename = 'uploads/' + name
+    widths = [str(i) for i in RESIZE_WIDTHS]
     
-    return render_template('resize.html')
+    # if request.method == 'POST':
+    #     sizes = request.form['size_select']
+        
+    #     return redirect(url_for('resize.download'))
+    
+    return render_template('resize.html', filename=filename, resize_widths=widths)
 
 def allowed_file(filename):
   return '.' in filename and \
