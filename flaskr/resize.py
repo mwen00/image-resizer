@@ -12,6 +12,7 @@ bp = Blueprint('resize', __name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = 'static/uploads/'
 RESIZE_WIDTHS = [100, 300, 500, 750, 1000, 1500, 2500]
 
@@ -35,16 +36,38 @@ def gallery():
     
     return render_template('gallery.html', images=images_dict)
 
+def process(sizes, filename):
+    path = APP_ROOT + '/static/' + filename
+    img = Image.open(path)
+    img_name = img.filename.split("/")[-1].strip('.jpg')
+    
+    for s in sizes:
+        if img.width > s:
+            downsize_pct = s/img.width
+            
+            new_width = int(img.width * downsize_pct)
+            new_height = int(img.height * downsize_pct)
+            
+            destination_dir = 'processed/' + img_name + "_" + str(s) + "w.jpg"
+            save_dir = APP_ROOT + '/static/' + destination_dir
+            
+            resized_img = img.resize((new_width, new_height))
+            resized_img.save(save_dir)
+
 @bp.route('/resize/<string:name>', methods=('GET', 'POST'))
 @login_required
 def resize(name):
     filename = 'uploads/' + name
     widths = [str(i) for i in RESIZE_WIDTHS]
-    
-    # if request.method == 'POST':
-    #     sizes = request.form['size_select']
-        
-    #     return redirect(url_for('resize.download'))
+
+    if request.method == 'POST':
+            sizes = request.form.to_dict(flat=False)['sizes']
+            int_sizes = [int(i) for i in sizes]
+            # try: 
+            process(int_sizes, filename)
+            # except:
+            #     flash('something went wrong')
+        # return redirect(url_for('resize.download'))
     
     return render_template('resize.html', filename=filename, resize_widths=widths)
 
