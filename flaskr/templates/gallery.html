@@ -10,7 +10,7 @@
 			<h3>{{ image['title'] }}</h3>
 			<p>{{ image['author_id'] }}</p>
 			{{ image['created'] }}
-			<img src='{{ image['src'] }}'>
-			{{ image['src'] }}
+			<img src={{ image['src'] }}>
+
 	{% endfor %}
 {% endblock %}

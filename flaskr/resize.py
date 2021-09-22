@@ -10,7 +10,7 @@ bp = Blueprint('resize', __name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-UPLOAD_FOLDER = 'images/uploads/'
+UPLOAD_FOLDER = 'static/uploads/'
 
 @bp.route('/gallery')
 @login_required
@@ -27,7 +27,8 @@ def gallery():
     images_dict = [dict(row) for row in images]
     
     for i in images_dict:
-        i['src'] = os.path.join(base_dir, UPLOAD_FOLDER, i['title'])
+        image_filename = 'uploads/' + i['title']
+        i['src'] = url_for('static', filename=image_filename)
     
     return render_template('gallery.html', images=images_dict)
 
