@@ -9,7 +9,7 @@
 		<div>
 			<h3>{{ image['title'] }}</h3>
 			<p>{{ image['author_id'] }}</p>
-			{{ image['created'] }}
+			{{ image['created'].strftime('%Y-%m-%d') }}
 			<!-- TODO: Remove width attribute and use CSS -->
 			<a href="{{ url_for('resize.resize', name=image['title']) }}">
 				<img src={{ image['src'] }} width="300">

@@ -17,7 +17,7 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_FOLDER = 'static/uploads/'
 RESIZE_WIDTHS = [100, 300, 500, 750, 1000, 1500, 2500]
 
-@bp.route('/gallery')
+@bp.route('/')
 @login_required
 def gallery():
     db = get_db()

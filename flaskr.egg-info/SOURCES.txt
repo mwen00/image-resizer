@@ -3,7 +3,7 @@ README.md
 setup.py
 flaskr/__init__.py
 flaskr/auth.py
-flaskr/blog.py
+flaskr/resize.py
 flaskr/db.py
 flaskr/schema.sql
 flaskr.egg-info/PKG-INFO
@@ -16,6 +16,7 @@ flaskr/static/style.css
 flaskr/templates/base.html
 flaskr/templates/auth/login.html
 flaskr/templates/auth/register.html
-flaskr/templates/blog/create.html
-flaskr/templates/blog/index.html
-flaskr/templates/blog/update.html
+flaskr/templates/gallery.html
+flaskr/templates/upload.html
+flaskr/templates/download.html
+flaskr/templates/resize.html
