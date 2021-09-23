@@ -6,6 +6,11 @@
 
 {% block content %}
 	<div>
-
+		<h3>Download:</h3>
+		{% for image in images %}
+			<a href={{ url_for('static', filename=image) }} target="_blank">
+				{{ image }}
+			</a>
+		{% endfor %}
 	<div>
 {% endblock %}

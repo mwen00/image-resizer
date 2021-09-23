@@ -1,5 +1,6 @@
 import os
 import glob
+import re
 
 from flask import Blueprint, flash, g, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
@@ -113,15 +114,30 @@ def upload_file():
 @bp.route('/download')
 @login_required
 def download():
+    # Location of already resized images 
+    processed_dir = APP_ROOT + '/static/processed/'
+    processed_images = []
+    
+    # Get the images uploaded by logged in user
     db = get_db()
-    images = db.execute(
+    user_images = db.execute(
         'SELECT title'
         ' FROM images i JOIN user u ON i.author_id = u.id'
         ' WHERE u.id = ?',
         (g.user['id'],)
     ).fetchall()
     
+    # Strip extension from title of image files
+    titles = [i['title'].replace('.jpg', '') for i in user_images]
     
-    
+    # Create a list of resized images that match 'titles'
+    for i in glob.glob(processed_dir + '*.jpg'):
+        filename = i.split('/')[-1]
+        filename_dir = 'processed/' + filename
+        original_name = re.sub(r"_\d+w.+", "", filename)
+        
+        # Add filenames to list
+        if original_name in titles:
+            processed_images.append(filename_dir)
     
     return render_template('download.html', images=processed_images)
