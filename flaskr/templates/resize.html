@@ -1,12 +1,8 @@
 {% extends 'base.html' %}
 
-{% block header %}
-	<h1>{% block title %}Resizer{% endblock %}</h1>
-{% endblock %}
-
 {% block content %}
 	<div>
-		<img src={{ url_for('static', filename=filename)}} width='300'>
+		<img src={{ url_for('static', filename=filename_dir)}} width='300'>
 		<form method="post">
 			<label for="resize-widths">Choose resize widths for your image:</label>
 			<select name="sizes" id="size-select" multiple>
