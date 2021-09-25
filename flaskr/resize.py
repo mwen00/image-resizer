@@ -16,7 +16,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 RESIZE_WIDTHS = [100, 300, 500, 750, 1000, 1500, 2500]
 
 # All the constants necessary to build paths
-# TODO: Compare base_dir and APP_ROOT
+# TODO: Compare base_dir and APP_ROOT and make this all a little cleaner
 base_dir = os.path.abspath(os.path.dirname(__file__))
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_PATH = '/static/'
