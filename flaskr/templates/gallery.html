@@ -14,15 +14,13 @@
 	<div class="grid grid-container">
 	{% for image in images %}
 		<div class="grid-item grid-item--width4">
-			<!-- <h3>{{ image['name'] }}</h3> -->
-			<!-- {{ image['created'].strftime('%Y-%m-%d') }} -->
-			<!-- TODO: Remove width attribute and use CSS -->
-			<a href="{{ url_for('resize.resize', title=image['title']) }}">
-				<img class="gallery-image" src={{ url_for('static', filename=image['filename_dir']) }}>
-			</a>
-			<!-- <a href="{{ url_for('resize.delete', title=image['title']) }}">
-				Delete
-			</a> -->
+			<div>
+				<a href="{{ url_for('resize.resize', title=image['title']) }}">
+					<img class="gallery-image" src={{ url_for('static', filename=image['filename_dir']) }}>
+				</a>
+				<!-- <h3>{{ image['name'] }}</h3> -->
+				<!-- {{ image['created'].strftime('%Y-%m-%d') }} -->
+			</div>
 		</div>
 	{% endfor %}
 	</div>

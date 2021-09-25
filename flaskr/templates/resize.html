@@ -6,6 +6,7 @@
 
 {% block content %}
 	<div class="d-flex flex-column text-center">
+		<p>or delete image <a href="{{ url_for('resize.delete', title=title) }}">here</a></p>
 		<img class="gallery-image mx-auto" src={{ url_for('static', filename=filename_dir)}}>
 		<form class="d-flex flex-column mx-auto" method="post">
 			<label for="resize-widths" class="pt-3 font-weight-bold">
