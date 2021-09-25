@@ -3,7 +3,6 @@
 {% block header %}
 	{% if g.user %}
 		<h2>Gallery</h2>
-		<a href="{{ url_for('resize.upload') }}">Upload new images.</a>
 		<p>Select an image to resize!</p>
 	{% else %}
 		<h2>Login to Start</h2>

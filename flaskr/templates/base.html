@@ -1,25 +1,39 @@
 <!doctype html>
 <html lang="en">
   <title>{% block title %}{% endblock %}</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <nav>
-    <h1>Image Resizer</h1>
-    <ul>
+
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css')}}">
+
+  <div class="container">
+    <nav class="d-flex flex-wrap justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+      <span class="d-flex align-items-center h5 text-dark">Image Resizer</span>
       {% if g.user %}
-        <li><span>{{ g.user['username'] }}</span>
+      <div>
+        <ul class="nav nav-pills">
         {% if 'resize.gallery' not in request.endpoint %}
-          <li><a href="{{ url_for('resize.gallery') }}">Gallery</a>
+            <li class="nav-item"><a href="{{ url_for('resize.gallery') }}" class="nav-link">Gallery</a></li>
+        {% endif %}
+        {% if 'resize.upload' not in request.endpoint %}
+            <li class="nav-item"><a href="{{ url_for('resize.upload') }}" class="nav-link">Upload</a></li>
         {% endif %}
         {% if 'resize.download' not in request.endpoint %}
-          <li><a href="{{ url_for('resize.download') }}">Downloads</a>
+            <li class="nav-item"><a href="{{ url_for('resize.download') }}" class="nav-link">Download</a></li>
         {% endif %}
-        <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
-      {% else %}
-        <li><a href="{{ url_for('auth.register') }}">Register</a>
-        <li><a href="{{ url_for('auth.login') }}">Log In</a>
+        </ul>
+      </div>
       {% endif %}
-    </ul>
-  </nav>
+      <div class="col-md-3 nav">
+        {% if g.user %}
+          <span class="nav-link">{{ g.user['username'] }}</span>
+          <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-primary me-2">Log Out</a>
+        {% else %}
+          <a href="{{ url_for('auth.register') }}" class="btn btn-primary me-2">Register</a>
+          <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary me-2">Log In</a>
+        {% endif %}
+      </div>
+    </nav>
+  </div>
+
   <section class="content">
     <header>
       {% block header %}{% endblock %}
