@@ -2,6 +2,7 @@
 <html lang="en">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css')}}">
   <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css')}}">
+  {% block additional_styling %}{% endblock %}
 
   <div class="container">
     <nav class="d-flex flex-wrap justify-content-center justify-content-md-between py-3 mb-4 border-bottom">

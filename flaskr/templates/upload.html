@@ -1,13 +1,17 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>New Image</h1>
+  <h2>New Image</h2>
 {% endblock %}
 
 {% block content %}
-	<form method="post" enctype="multipart/form-data">
-		<label for="file">Choose an image to resize:</label>
-		<input type="file" name="file" id="file">
-		<input type="submit" value="Upload">
+	<form method="post" enctype="multipart/form-data" class="d-flex flex-column mx-auto pt-4">
+		<div class="input-group">
+			<div class="custom-file">
+				<input type="file" name="file" id="file" class="pt-2 custom-file-input">
+				<label class="custom-file-label" for="file">Choose file to resize</label>
+			</div>
+		</div>
+		<input type="submit" value="Upload" class="btn btn-primary my-3 btn-submit mx-auto">
 	</form>
 {% endblock %}

@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block header %}
-	<h1>Download Processed Images</h1>
+	<h2>Download Processed Images</h2>
 {% endblock %}
 
 {% block content %}
-	<div>
+	<div class="d-flex flex-column mx-auto pt-3">
 		{% if images|length %}
 			{% for image in images %}
-				<a href={{ url_for('static', filename=image) }} target="_blank">
-					{{ image }}
+				<a href={{ url_for('static', filename=image) }} target="_blank" class="pb-1">
+					{{ image.replace('processed/', '') }}
 				</a>
 			{% endfor %}
 		{% else %}

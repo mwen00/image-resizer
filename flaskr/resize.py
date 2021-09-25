@@ -64,6 +64,7 @@ def process(sizes, filename_dir):
     image_name, image_ext = image.filename.split('/')[-1].split('.')
 
     # Resize images for each of the selected sizes
+    # TODO: Show appropriate message when cannot resize up or allow capability to resize up / limit options
     for s in sizes:
       if image.width > s:
         downsize_pct = s/image.width
@@ -98,7 +99,7 @@ def resize(title):
         except:
             flash('Something went wrong. Please try again.')
     
-    return render_template('resize.html', filename_dir=filename_dir, resize_widths=widths)
+    return render_template('resize.html', filename_dir=filename_dir, resize_widths=widths, title=title)
 
 def allowed_ext(title):
   return '.' in title and \
