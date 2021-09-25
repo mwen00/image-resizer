@@ -69,7 +69,7 @@ def process(sizes, filename_dir):
         new_height = int(image.height * downsize_pct)
         
         # Have to use absolute path to save the new image
-        download_dir = APP_ROOT + STATIC_PATH + DOWNLOAD_PATH + image_name + "_" + str(s) + "w." + image_ext
+        download_dir = APP_ROOT + STATIC_PATH + DOWNLOAD_PATH + image_name + '_' + str(s) + 'w.' + image_ext
         
         # Resize and then save image
         resized_image = image.resize((new_width, new_height))
@@ -169,7 +169,7 @@ def download():
       for f in glob.glob(processed_dir + '*.' + i):
           title = f.split('/')[-1]
           filename_dir = DOWNLOAD_PATH + title
-          original_name = re.sub(r"_\d+w.+", "", title)
+          original_name = re.sub(r'_\d+w.+', '', title)
           
           # Add filenames to list
           if original_name in names:
