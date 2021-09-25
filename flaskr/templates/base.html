@@ -7,6 +7,12 @@
     <ul>
       {% if g.user %}
         <li><span>{{ g.user['username'] }}</span>
+        {% if 'resize.gallery' not in request.endpoint %}
+          <li><a href="{{ url_for('resize.gallery') }}">Gallery</a>
+        {% endif %}
+        {% if 'resize.download' not in request.endpoint %}
+          <li><a href="{{ url_for('resize.download') }}">Downloads</a>
+        {% endif %}
         <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
       {% else %}
         <li><a href="{{ url_for('auth.register') }}">Register</a>
