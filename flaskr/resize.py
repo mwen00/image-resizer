@@ -13,9 +13,12 @@ bp = Blueprint('resize', __name__)
 base_dir = os.path.abspath(os.path.dirname(__file__))
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
-APP_ROOT = os.path.dirname(os.path.abspath(__file__))
-UPLOAD_FOLDER = 'static/uploads/'
 RESIZE_WIDTHS = [100, 300, 500, 750, 1000, 1500, 2500]
+
+# All the constants necessary to build paths
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+STATIC_PATH = '/static/'
+UPLOAD_FOLDER = 'static/uploads/'
 UPLOAD_PATH = 'uploads/'
 DOWNLOAD_PATH = 'processed/'
 
@@ -46,14 +49,16 @@ def gallery():
           i['filename_dir'] = UPLOAD_PATH + i['title']
           
           # Remove extension from title of image
-          i['name'] = i['title'].split(".")[-2]
+          i['name'] = i['title'].split('.')[-2]
     
     return render_template('gallery.html', images=images)
 
 def process(sizes, filename_dir):
-    path = APP_ROOT + '/static/' + filename_dir
+    path = APP_ROOT + STATIC_PATH + filename_dir
     image = Image.open(path)
-    image_name, image_ext = image.filename.split("/")[-1].split('.')
+    
+    # Assumes there is only one "." in the filename
+    image_name, image_ext = image.filename.split('/')[-1].split('.')
 
     # Resize images for each of the selected sizes
     for s in sizes:
@@ -64,7 +69,7 @@ def process(sizes, filename_dir):
         new_height = int(image.height * downsize_pct)
         
         # Have to use absolute path to save the new image
-        download_dir = APP_ROOT + '/static/' + DOWNLOAD_PATH + image_name + "_" + str(s) + "w." + image_ext
+        download_dir = APP_ROOT + STATIC_PATH + DOWNLOAD_PATH + image_name + "_" + str(s) + "w." + image_ext
         
         # Resize and then save image
         resized_image = image.resize((new_width, new_height))
@@ -92,7 +97,7 @@ def resize(title):
     
     return render_template('resize.html', filename_dir=filename_dir, resize_widths=widths)
 
-def allowed_file(title):
+def allowed_ext(title):
   return '.' in title and \
     title.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -102,12 +107,12 @@ def upload():
   # TODO: Check for duplicate filenames for user
   
   if request.method == 'POST':
-    file = request.files['file']
+    file = request.files['title']
     error = None
     
     if not file:
       error = 'File is required.'
-    elif not allowed_file(file.filename):
+    elif not allowed_ext(file.filename):
       error = 'Accepted file formats: ' + ', '.join(str(i) for i in ALLOWED_EXTENSIONS)
     
     if error is not None:
@@ -130,11 +135,21 @@ def upload():
   
   return render_template('upload.html')
 
+def remove_ext(images):
+  names = []
+  
+  for i in ALLOWED_EXTENSIONS:
+    ext = '.' + i
+    for image in images:
+      names.append(image['title'].replace(ext, ''))
+  
+  return(names)
+
 @bp.route('/download')
 @login_required
 def download():
     # Location of already resized images 
-    processed_dir = APP_ROOT + '/static/processed/'
+    processed_dir = APP_ROOT + STATIC_PATH + DOWNLOAD_PATH
     processed_images = []
     
     # Get the images uploaded by logged in user
@@ -147,16 +162,17 @@ def download():
     ).fetchall()
     
     # Strip extension from title of image files
-    titles = [i['title'].replace('.jpg', '') for i in user_images]
+    names = remove_ext(user_images)
     
-    # Create a list of resized images that match 'titles'
-    for i in glob.glob(processed_dir + '*.jpg'):
-        filename = i.split('/')[-1]
-        filename_dir = 'processed/' + filename
-        original_name = re.sub(r"_\d+w.+", "", filename)
-        
-        # Add filenames to list
-        if original_name in titles:
-            processed_images.append(filename_dir)
+    # Create a list of resized images that match 'names'
+    for i in ALLOWED_EXTENSIONS:
+      for f in glob.glob(processed_dir + '*.' + i):
+          title = f.split('/')[-1]
+          filename_dir = DOWNLOAD_PATH + title
+          original_name = re.sub(r"_\d+w.+", "", title)
+          
+          # Add filenames to list
+          if original_name in names:
+              processed_images.append(filename_dir)
     
     return render_template('download.html', images=processed_images)
