@@ -2,10 +2,10 @@
 
 {% block header %}
 	{% if g.user %}
-		<h2>Gallery</h2>
+		<h1 class="h3 mb-3 fw-normal">Gallery</h1>
 		<p>Click on an image to resize!</p>
 	{% else %}
-		<h2>You Must Login to Start</h2>
+		<h1 class="h3 mb-3 fw-normal">You Must Login to Start</h1>
 	{% endif %}
 	<p id="demo"></p>
 {% endblock %}
