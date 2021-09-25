@@ -6,10 +6,14 @@
 
 {% block content %}
 	<div>
-		{% for image in images %}
-			<a href={{ url_for('static', filename=image) }} target="_blank">
-				{{ image }}
-			</a>
-		{% endfor %}
+		{% if images|length %}
+			{% for image in images %}
+				<a href={{ url_for('static', filename=image) }} target="_blank">
+					{{ image }}
+				</a>
+			{% endfor %}
+		{% else %}
+				<a href="{{ url_for('resize.upload') }}">Upload more images!</a>
+		{% endif %}
 	<div>
 {% endblock %}

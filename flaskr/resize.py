@@ -4,25 +4,27 @@ import re
 
 from flask import Blueprint, flash, g, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
+from werkzeug.exceptions import abort
 from PIL import Image
 
 from flaskr.auth import login_required
 from flaskr.db import get_db
 
 bp = Blueprint('resize', __name__)	
-base_dir = os.path.abspath(os.path.dirname(__file__))
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 RESIZE_WIDTHS = [100, 300, 500, 750, 1000, 1500, 2500]
 
 # All the constants necessary to build paths
+# TODO: Compare base_dir and APP_ROOT
+base_dir = os.path.abspath(os.path.dirname(__file__))
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_PATH = '/static/'
 UPLOAD_FOLDER = 'static/uploads/'
 UPLOAD_PATH = 'uploads/'
 DOWNLOAD_PATH = 'processed/'
+ABSPATH_DOWNLOAD_FOLDER = APP_ROOT + STATIC_PATH + DOWNLOAD_PATH
 
-# TODO: Add functionality to delete images
 '''
 filename_dir - image path in static folder
 title - filename with extension
@@ -31,6 +33,7 @@ name - filename without extension
 
 @bp.route('/')
 def gallery():
+    images = []
     
     if g.user is not None:
       # Get the images uploaded by logged in user
@@ -107,7 +110,7 @@ def upload():
   # TODO: Check for duplicate filenames for user
   
   if request.method == 'POST':
-    file = request.files['title']
+    file = request.files['file']
     error = None
     
     if not file:
@@ -145,11 +148,16 @@ def remove_ext(images):
   
   return(names)
 
+def get_original_name(file_path):
+  title = file_path.split('/')[-1]
+  original_name = re.sub(r'_\d+w.+', '', title)
+  
+  return title, original_name
+
 @bp.route('/download')
 @login_required
 def download():
-    # Location of already resized images 
-    processed_dir = APP_ROOT + STATIC_PATH + DOWNLOAD_PATH
+    # Location of already resized images
     processed_images = []
     
     # Get the images uploaded by logged in user
@@ -166,7 +174,7 @@ def download():
     
     # Create a list of resized images that match 'names'
     for i in ALLOWED_EXTENSIONS:
-      for f in glob.glob(processed_dir + '*.' + i):
+      for f in glob.glob(ABSPATH_DOWNLOAD_FOLDER + '*.' + i):
           title = f.split('/')[-1]
           filename_dir = DOWNLOAD_PATH + title
           original_name = re.sub(r'_\d+w.+', '', title)
@@ -176,3 +184,49 @@ def download():
               processed_images.append(filename_dir)
     
     return render_template('download.html', images=processed_images)
+  
+def get_image(title, check_author=True):
+  image = (
+    get_db()
+    .execute(
+      'SELECT i.id, title, author_id'
+      ' FROM images i JOIN user u ON i.author_id = u.id'
+      ' WHERE title = ?',
+      (title,)
+    )
+    .fetchone()
+  )
+  
+  if image is None:
+    abort(404, f"Image {image} doesn't exist.")
+  
+  if check_author and image['author_id'] != g.user['id']:
+    abort(403)
+  
+  return image
+  
+@bp.route('/<string:title>/delete', methods=('GET', 'POST'))
+@login_required
+def delete(title):
+  # Would potentially run into issues of files with the same name and will also delete all processed images that match name despite the logged in user
+  
+  # Delete image association with user in db
+  image = get_image(title)  
+  db = get_db()
+  db.execute('DELETE FROM images WHERE id = ?', (image['id'],))
+  db.commit()
+  
+  # Delete original image from Uploads
+  file_upload_path = os.path.join(base_dir, UPLOAD_FOLDER, title)
+  os.remove(file_upload_path)
+  
+  # Delete resized images from Processed
+  name, extension = title.split('.')
+  for f in glob.glob(ABSPATH_DOWNLOAD_FOLDER + '*.' + extension):
+    title, original_name = get_original_name(f)
+    
+    if original_name == name:
+      file_download_path = os.path.join(ABSPATH_DOWNLOAD_FOLDER, title)
+      os.remove(file_download_path)
+    
+  return redirect(url_for('resize.gallery'))  

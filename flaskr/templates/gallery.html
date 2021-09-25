@@ -19,5 +19,8 @@
 			<a href="{{ url_for('resize.resize', title=image['title']) }}">
 				<img src={{ url_for('static', filename=image['filename_dir']) }} width="300">
 			</a>
+			<a href="{{ url_for('resize.delete', title=image['title']) }}">
+				Delete
+			</a>
 	{% endfor %}
 {% endblock %}
