@@ -33,6 +33,7 @@ name - filename without extension
 
 @bp.route('/')
 def gallery():
+    #TODO: Auto resize to 100px and use that in gallery. Perhaps add resized names to a new table.
     images = []
     
     if g.user is not None:
@@ -158,6 +159,7 @@ def get_original_name(file_path):
 @bp.route('/download')
 @login_required
 def download():
+    #TODO: Make downloading all easier, see preview of original & then other size options
     # Location of already resized images
     processed_images = []
     
